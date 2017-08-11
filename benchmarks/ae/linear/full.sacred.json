@@ -1,0 +1,138 @@
+{
+    "dataset": {
+    },
+    "extensions": [
+        {
+            "obj::type": "research.utils.monitoring.monitoring_cost",
+            "name": "layer_[0-9]+_(reconstruction_error|maximum_variance|orthogonality_penalty|contraction_penalty|overlap_penalty)_deterministic_%(set)s",
+            "after_batch": "True"
+        },
+        {
+            "obj::type": "blocks.extensions.stopping.EarlyStopping",
+            "record_name": "layer_1_reconstruction_error_deterministic_valid",
+            "epochs": 50
+        },
+        {
+            "obj::type": "research.framework.extensions.stopping.FinishIfNaN",
+            "keys": ["reconstruction_error", "maximum_variance", "penalty"],
+            "after_epoch": "True"
+        },
+        {
+            "obj::type": "research.framework.extensions.stopping.FinishIfNoImprovementYet",
+            "after_n_epochs": 10,
+            "epsilon": 0.25
+        },
+        {
+            "obj::type": "blocks.extensions.Timestamp"
+        },
+        {
+            "obj::type": "research.framework.extensions.sacred_extension.build_sacred_logging",
+            "keys": [
+                "timestamp", "epochs_done", "iterations_done",
+                "layer_1_reconstruction_error_%(model)s_%(set)s$",
+                "layer_1_maximum_variance_%(model)s_%(set)s$",
+                "layer_1_orthogonality_penalty_%(model)s_%(set)s$",
+                "layer_1_contraction_penalty_%(model)s_%(set)s$",
+                "layer_1_overlap_penalty_%(model)s_%(set)s$",
+                "_layer_[0-9]+_lifetime_sparsity_deterministic_train"]
+        },
+        {
+            "obj::type": "research.framework.extensions.stopping.CompletionTimeout",
+            "sigterm_timeout": 600,
+            "sigkill_timeout": 300
+        }
+    ],
+    "inputs": [
+        { 
+            "obj::type": "theano.tensor.matrix",
+            "name": "features"
+        }
+    ],
+    "layers": [
+        {
+            "ndim": 5,
+            "activation": {
+                "obj::type": "blocks.bricks.Identity"
+            }
+        }
+    ],
+    "optimization": {
+        "step_rule": {
+            "obj::type": "blocks.algorithms.CompositeRule",
+            "components": {
+                "0": {
+                    "obj::type": "blocks.algorithms.Momentum",
+                    "learning_rate": 0.000000000001,
+                    "momentum": 0.0
+                },
+                "1": {
+                    "obj::type": "research.framework.algorithms.Restrict",
+                    "variable_filter": {
+                        "obj::type": "blocks.filter.VariableFilter",
+                        "theano_name_regex": "linear_[0-9]+_W"
+                    },
+                    "step_rule": {
+                        "obj::type": "blocks.algorithms.VariableClipping",
+                        "threshold": 100000.0
+                    }
+                }
+            }
+        },
+        "cost": {
+            "layer_1_reconstruction_error": {
+                "obj::type": "research.framework.costs.reconstruction.ReconstructionError",
+                "use_bias": 0,
+                "inputs": ["linear_[0-9]+_apply_input_$",
+                           "linear_[0-9]+_identity_apply_output$"],
+                "coefficient": {
+                    "0": 1.0
+                }
+            },
+            "layer_1_maximum_variance": {
+                "obj::type": "research.framework.costs.norms.MaximumVariance",
+                "inputs": ["linear_[0-9]+_identity_apply_output$"],
+                "coefficient": {
+                    "0": 0.0
+                }
+            },
+            "layer_1_weight_orthogonality_penalty": {
+                "obj::type": "research.framework.costs.norms.WeightOrthogonalityPenalty",
+                "inputs": ["linear_[0-9]+_W$", "linear_[0-9]+_identity_apply_output$"],
+                "coefficient": {
+                    "0": 0.0
+                }
+            },
+            "layer_1_code_orthogonality_penalty": {
+                "obj::type": "research.framework.costs.norms.CodeOrthogonalityPenalty",
+                "inputs": ["linear_[0-9]+_identity_apply_output$"],
+                "coefficient": {
+                    "0": 0.0
+                }
+            },
+            "layer_1_contraction_penalty": {
+                "obj::type": "research.framework.costs.norms.ContractivePenalty",
+                "inputs": ["linear_[0-9]+_apply_input_$",
+                           "linear_[0-9]+_W$",
+                           "linear_[0-9]+_identity_apply_output$"],
+                "coefficient": {
+                    "0": 0.0
+                }
+            },
+            "layer_1_overlap_penalty": {
+                "obj::type": "research.framework.costs.overlap.OverlapPenalty",
+                "inputs": ["linear_[0-9]+_identity_apply_output$"],
+                "coefficient": {
+                    "0": 0.0
+                }
+            }
+        }
+    },
+    "weights_init": {
+        "obj::type": "blocks.initialization.Uniform",
+        "width": 0.65
+    },
+    "biases_init": {
+        "obj::type": "blocks.initialization.Constant",
+        "constant": 0.0
+    }
+}

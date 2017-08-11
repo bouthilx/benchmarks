@@ -1,0 +1,42 @@
+{
+    "optimization": {
+        "nb_of_epochs": 1000,
+        "step_rule": {
+            "components": {
+                "0": {
+                    "learning_rate": {
+                        "obj::type": "research.framework.spaces.Logarithmic",
+                        "min": 0.00001,
+                        "max": 1.0
+                    }
+                }
+            }
+        },
+        "cost": {
+            "layer_1_reconstruction_error": {
+                "coefficient": {
+                    "0": 0.0
+                }
+            },
+            "layer_1_maximum_variance": {
+                "obj::type": "research.framework.costs.norms.MaximumVariance",
+                "coefficient": {
+                    "0": {
+                        "obj::type": "research.framework.spaces.Logarithmic",
+                        "min": 0.00001,
+                        "max": 1.0
+                    }
+                }
+            },
+            "layer_1_weight_orthogonality_penalty": {
+                "coefficient": {
+                    "0": {
+                        "obj::type": "research.framework.spaces.Logarithmic",
+                        "min": 0.00001,
+                        "max": 1.0
+                    }
+                }
+            }
+        }
+    }
+}
