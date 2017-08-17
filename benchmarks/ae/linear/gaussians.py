@@ -1,4 +1,4 @@
-from main import configuration_functions, build
+from main import configuration_functions, build, setup_config
 
 
 def set_gaussians_dataset(full_config):

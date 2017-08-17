@@ -2,7 +2,7 @@ import inspect
 import logging
 import os
 
-from benchmarks.mlp.main import configuration_functions
+from benchmarks.mlp.main import configuration_functions, setup_config
 from benchmarks.mlp.main import build as parent_build
 
 

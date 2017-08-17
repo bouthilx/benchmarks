@@ -44,7 +44,7 @@ def config():
 configuration_functions = []
 
 
-def setup_config(full_config_path, sub_config):
+def setup_config(full_config_path, sub_config, ignore=tuple()):
     sub_config = turn_to(sub_config, OrderedDict)
 
     full_config = experiments.setup_config(

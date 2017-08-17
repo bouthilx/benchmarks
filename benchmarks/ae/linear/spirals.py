@@ -1,4 +1,4 @@
-from main import configuration_functions, build
+from main import configuration_functions, build, setup_config
 
 
 def set_spirals_dataset(full_config):
