@@ -19,7 +19,6 @@
                 }
             },
             "layer_1_maximum_variance": {
-                "obj::type": "research.framework.costs.norms.MaximumVariance",
                 "coefficient": {
                     "0": {
                         "obj::type": "research.framework.spaces.Logarithmic",
@@ -29,8 +28,6 @@
                 }
             },
             "layer_1_code_orthogonality_penalty": {
-                "obj::type": "research.framework.costs.norms.CodeOrthogonalityPenalty",
-                "inputs": ["linear_[0-9]+_identity_apply_output$"],
                 "coefficient": {
                     "0": {
                         "obj::type": "research.framework.spaces.Logarithmic",

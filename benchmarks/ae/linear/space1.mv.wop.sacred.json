@@ -19,7 +19,6 @@
                 }
             },
             "layer_1_maximum_variance": {
-                "obj::type": "research.framework.costs.norms.MaximumVariance",
                 "coefficient": {
                     "0": {
                         "obj::type": "research.framework.spaces.Logarithmic",
