@@ -50,6 +50,10 @@
     ],
     "layers": [
         {
+            "prototype": {
+                "obj::type": "blocks.bricks.Linear",
+                "use_bias": 0
+            },
             "ndim": 5,
             "activation": {
                 "obj::type": "blocks.bricks.Identity"
